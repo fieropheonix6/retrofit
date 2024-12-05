@@ -83,3 +83,4 @@ robovm = { module = "com.mobidevelop.robovm:robovm-rt", version.ref = "robovm" }
 googleJavaFormat = "com.google.googlejavaformat:google-java-format:1.25.0"
 ktlint = "com.pinterest.ktlint:ktlint-cli:1.5.0"
 compileTesting = "com.google.testing.compile:compile-testing:0.21.0"
+testParameterInjector = "com.google.testparameterinjector:test-parameter-injector:1.18"
