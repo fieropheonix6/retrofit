@@ -15,33 +15,31 @@
  */
 package retrofit2.converter.wire;
 
+import static retrofit2.converter.wire.WireRequestBodyConverter.MEDIA_TYPE;
+
 import com.squareup.wire.Message;
 import com.squareup.wire.ProtoAdapter;
 import java.io.IOException;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
-import okio.Buffer;
-import retrofit2.Converter;
+import okio.BufferedSink;
 
-final class WireRequestBodyConverter<T extends Message<T, ?>> implements Converter<T, RequestBody> {
-  static final MediaType MEDIA_TYPE = MediaType.get("application/x-protobuf");
-
+final class WireStreamingRequestBody<T extends Message<T, ?>> extends RequestBody {
   private final ProtoAdapter<T> adapter;
-  private final boolean streaming;
+  private final T value;
 
-  WireRequestBodyConverter(ProtoAdapter<T> adapter, boolean streaming) {
+  WireStreamingRequestBody(ProtoAdapter<T> adapter, T value) {
     this.adapter = adapter;
-    this.streaming = streaming;
+    this.value = value;
   }
 
   @Override
-  public RequestBody convert(T value) throws IOException {
-    if (streaming) {
-      return new WireStreamingRequestBody<>(adapter, value);
-    }
+  public MediaType contentType() {
+    return MEDIA_TYPE;
+  }
 
-    Buffer buffer = new Buffer();
-    adapter.encode(buffer, value);
-    return RequestBody.create(MEDIA_TYPE, buffer.snapshot());
+  @Override
+  public void writeTo(BufferedSink sink) throws IOException {
+    adapter.encode(sink, value);
   }
 }
